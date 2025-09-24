@@ -10,38 +10,44 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    /**
-     * Register user baru (role: student)
-     */
     public function register(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-            'face_data' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'name'            => 'required|string|max:255',
+            'email'           => 'required|email|unique:users,email',
+            'password'        => 'required|string|min:6|confirmed',
+            // 'face_data'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'avatar'          => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'jenjang_sekolah' => 'nullable|string|max:100',
+            'asal_sekolah'    => 'nullable|string|max:255',
         ]);
 
-        // simpan file wajah kalau ada
-        $facePath = null;
-        if ($request->hasFile('face_data')) {
-            $facePath = $request->file('face_data')->store('faces', 'public');
+        // Upload wajah sementara dimatikan
+        // $facePath = null;
+        // if ($request->hasFile('face_data')) {
+        //     $facePath = $request->file('face_data')->store('faces', 'public');
+        // }
+
+        // simpan avatar kalau ada
+        $avatarPath = null;
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 
         $user = User::create([
-            'name'           => $request->name,
-            'email'          => $request->email,
-            'password'       => Hash::make($request->password),
-            'role_id'        => 3, // default student
-            'face_data_path' => $facePath,
+            'name'            => $request->name,
+            'email'           => $request->email,
+            'password'        => Hash::make($request->password),
+            'role_id'         => 3, // default student
+            // 'face_data_path'  => $facePath,
+            'avatar'          => $avatarPath,
+            'jenjang_sekolah' => $request->jenjang_sekolah,
+            'asal_sekolah'    => $request->asal_sekolah,
         ]);
 
         return new UserResource($user);
     }
 
-    /**
-     * Login dengan email + password
-     */
     public function login(Request $request)
     {
         $request->validate([
@@ -66,9 +72,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Logout (hapus token)
-     */
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

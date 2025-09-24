@@ -12,9 +12,12 @@ class CourseResource extends JsonResource
             'id'          => $this->id,
             'title'       => $this->title,
             'description' => $this->description,
+            'photo'       => $this->photo, // dari accessor di model
             'created_by'  => new UserResource($this->whenLoaded('creator')),
             'modules'     => ModuleResource::collection($this->whenLoaded('modules')),
             'exams'       => ExamResource::collection($this->whenLoaded('exams')),
+            'created_at'  => $this->created_at,
+            'updated_at'  => $this->updated_at,
         ];
     }
 }

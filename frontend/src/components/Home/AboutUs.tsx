@@ -1,31 +1,23 @@
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
 const stats = [
   { name: "Years of Experience", value: "10+" },
   { name: "Projects Completed", value: "250+" },
   { name: "Happy Clients", value: "500+" },
   { name: "Global Partners", value: "20+" },
-]
+];
 
 export default function AboutUs() {
   return (
-    <div className="bg-gray-900" id="about">
-      {/* ===== ABOUT US SECTION WITH ANIMATION ===== */}
+    <div id="about">
       <motion.div
-        className="relative isolate overflow-hidden py-24 sm:py-32"
+        className="relative isolate overflow-hidden py-24 sm:py-32 bg-gradient-to-br from-[#E4004B] via-[#ED775A] to-[#FAD691]"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
       >
-        {/* Background */}
-        <img
-          alt=""
-          src="https://images.unsplash.com/photo-1556761175-129418cb2dfe?q=80&w=2830&auto=format&fit=crop"
-          className="absolute inset-0 -z-10 size-full object-cover object-center"
-        />
-        <div className="absolute inset-0 -z-10 bg-black/70" />
-
+        <div className="absolute inset-0 -z-10 bg-black/30" />
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:mx-0">
             <motion.h2
@@ -38,7 +30,7 @@ export default function AboutUs() {
               About Us
             </motion.h2>
             <motion.p
-              className="mt-8 text-lg font-medium text-pretty text-gray-300 sm:text-xl/8"
+              className="mt-8 text-lg font-medium text-pretty text-[#C9CDCF] sm:text-xl/8"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -51,7 +43,6 @@ export default function AboutUs() {
           </div>
 
           <div className="mx-auto mt-10 max-w-2xl lg:mx-0 lg:max-w-none">
-
             {/* Stats */}
             <motion.dl
               className="mt-16 grid grid-cols-1 gap-8 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4"
@@ -60,18 +51,25 @@ export default function AboutUs() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              {stats.map((stat) => (
-                <div key={stat.name} className="flex flex-col-reverse gap-1">
-                  <dt className="text-base/7 text-gray-300">{stat.name}</dt>
-                  <dd className="text-4xl font-semibold tracking-tight text-white">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={stat.name}
+                  className="rounded-2xl bg-white/10 backdrop-blur-md p-6 shadow-lg hover:scale-105 transition-transform duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
+                >
+                  <dd className="text-4xl font-semibold tracking-tight text-white drop-shadow-lg">
                     {stat.value}
                   </dd>
-                </div>
+                  <dt className="mt-2 text-base text-[#C9CDCF]">{stat.name}</dt>
+                </motion.div>
               ))}
             </motion.dl>
           </div>
         </div>
       </motion.div>
     </div>
-  )
+  );
 }

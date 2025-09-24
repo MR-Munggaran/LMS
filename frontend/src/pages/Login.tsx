@@ -1,48 +1,59 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import useLogin from "@/hooks/useLogin"; 
 
 export default function LoginTemplate() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [remember, setRemember] = React.useState(false);
+  const { loading, login } = useLogin(); 
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
-    // demo: simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      // TODO: replace with your auth logic (call API, handle tokens, redirect)
-      alert(`Logging in ${email}`);
-    }, 800);
+    await login({ email, password });
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6 relative bg-gradient-to-br from-[#E4004B] via-[#ED775A] to-[#FAD691]">
+      {/* Background gradient pakai palette */}
+      <div className="absolute inset-0 -z-10 " />
+      {/* Overlay supaya background lebih soft */}
+      <div className="absolute inset-0 -z-10 bg-white/40" />
+
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
         className="w-full max-w-md"
       >
-        <Card>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl">Selamat datang</CardTitle>
-            <CardDescription>Masuk ke akun kamu untuk melanjutkan.</CardDescription>
+        <Card className="backdrop-blur-lg bg-white/90 shadow-2xl rounded-2xl overflow-hidden">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-2xl font-bold text-[#E4004B]">
+              Selamat datang
+            </CardTitle>
+            <CardDescription className="text-[#6b7280]">
+              Masuk ke akun kamu untuk melanjutkan.
+            </CardDescription>
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-[#333]">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   placeholder="nama@contoh.com"
@@ -50,12 +61,14 @@ export default function LoginTemplate() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   type="email"
-                  className="mt-2"
+                  className="mt-2 border-[#C9CDCF] focus-visible:ring-[#E4004B]"
                 />
               </div>
 
               <div>
-                <Label htmlFor="password">Kata Sandi</Label>
+                <Label htmlFor="password" className="text-[#333]">
+                  Kata Sandi
+                </Label>
                 <Input
                   id="password"
                   placeholder="••••••••"
@@ -63,29 +76,20 @@ export default function LoginTemplate() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   type="password"
-                  className="mt-2"
+                  className="mt-2 border-[#C9CDCF] focus-visible:ring-[#E4004B]"
                 />
-                <div className="text-sm mt-2 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="remember"
-                      checked={remember}
-                      onCheckedChange={(val) => setRemember(Boolean(val))}
-                    />
-                    <Label htmlFor="remember" className="cursor-pointer">Ingat saya</Label>
-                  </div>
-
-                  <a href="#" className="text-sm hover:underline">
-                    Lupa kata sandi?
-                  </a>
-                </div>
               </div>
 
               <div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-[#E4004B] hover:bg-[#ED775A] text-white"
+                  disabled={loading}
+                >
                   {loading ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Memproses...
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                      Memproses...
                     </>
                   ) : (
                     "Masuk"
@@ -93,15 +97,22 @@ export default function LoginTemplate() {
                 </Button>
               </div>
             </form>
-
           </CardContent>
 
           <CardFooter className="flex flex-col items-center gap-2">
-            <p className="text-sm">Belum punya akun? <NavLink to={'/register'} className="font-medium hover:underline">Daftar</NavLink></p>
+            <p className="text-sm text-[#333]">
+              Belum punya akun?{" "}
+              <NavLink
+                to={"/register"}
+                className="font-medium text-[#E4004B] hover:text-[#ED775A] transition-colors"
+              >
+                Daftar
+              </NavLink>
+            </p>
           </CardFooter>
         </Card>
 
-        <div className="text-xs text-center text-muted-foreground mt-4">
+        <div className="text-xs text-center text-[#333] mt-4 opacity-70">
           <p>Dengan masuk, kamu setuju dengan syarat dan ketentuan kami.</p>
         </div>
       </motion.div>

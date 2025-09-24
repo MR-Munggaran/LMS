@@ -14,7 +14,8 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = User::all(); // Ambil semua user
+        // Ambil user yang role-nya admin atau teacher
+        $users = User::whereIn('role', ['admin', 'teacher'])->get();
         
         if ($users->count() > 0) {
             $courses = [
@@ -86,7 +87,7 @@ class CourseSeeder extends Seeder
 
             $this->command->info('12 courses successfully seeded!');
         } else {
-            $this->command->error('No users found! Please run UserSeeder first.');
+            $this->command->error('No admin or teacher users found! Please seed users first.');
         }
     }
 }

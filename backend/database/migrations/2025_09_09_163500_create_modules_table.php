@@ -13,8 +13,14 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->longText('content')->nullable();
+            
+            // Tambahan
+            $table->string('document_path')->nullable(); // path dokumen
+            $table->string('video_url')->nullable();     // link video
+            
             $table->timestamps();
         });
+
     }
 
     public function down(): void

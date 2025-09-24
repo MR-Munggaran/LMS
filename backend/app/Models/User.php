@@ -5,37 +5,50 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laravel\Sanctum\HasApiTokens; 
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
-        'name', 'email', 'password', 'face_data_path', 'role_id'
+        'name',
+        'email',
+        'password',
+        // 'face_data_path', // sementara tidak digunakan
+        'role_id',
+        'jenjang_sekolah',
+        'asal_sekolah',
+        'avatar',
     ];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    // Relasi ke role
+    // otomatis menambahkan avatar_url ke JSON
+    protected $appends = ['avatar_url'];
+
+    /* =====================
+     |  RELATIONS
+     ===================== */
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
 
-    // Relasi ke courses yang dibuat user (guru/admin)
     public function createdCourses()
     {
         return $this->hasMany(Course::class, 'created_by');
     }
 
-    // Relasi ke enrollments
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class);
     }
 
-    // Relasi ke courses yang di-enroll user (many-to-many lewat enrollments)
     public function courses()
     {
         return $this->belongsToMany(Course::class, 'enrollments')
@@ -43,15 +56,21 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
-    // Relasi ke exam results
     public function examResults()
     {
         return $this->hasMany(ExamResult::class);
     }
 
-    // Relasi ke face logs
-    public function faceLogs()
+    /* =====================
+     |  ACCESSORS
+     ===================== */
+    public function getAvatarUrlAttribute(): ?string
     {
-        return $this->hasMany(FaceLog::class);
+        if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
+            return url(Storage::url($this->avatar));
+        }
+
+        // default avatar (pastikan ada di public/storage/images/default.jpg)
+        return url(Storage::url('images/default.jpg'));
     }
 }

@@ -12,9 +12,11 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
+            $table->string('photo')->nullable(); // foto / thumbnail course
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
+
     }
 
     public function down(): void

@@ -5,9 +5,9 @@ const Hero = () => {
   return (
     <section id="home" className="flex-1">
         <HeroGeometric
-          badge="Your Product"
+          badge="LMS App"
           title1="Transform Your"
-          title2="Digital Experience"
+          title2="Learning Journey"
           description="Build exceptional products that users love with our comprehensive component library and design system."
         />
       </section>

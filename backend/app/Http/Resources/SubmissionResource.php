@@ -16,10 +16,11 @@ class SubmissionResource extends JsonResource
                 'name' => $this->user->name,
                 'email' => $this->user->email,
             ],
-            'file_url' => $this->file_path ? asset('storage/' . $this->file_path) : null,
+            'file_url' => $this->document_url, // pakai accessor
             'answer_text' => $this->answer_text,
             'score' => $this->score,
             'created_at' => $this->created_at,
         ];
     }
 }
+

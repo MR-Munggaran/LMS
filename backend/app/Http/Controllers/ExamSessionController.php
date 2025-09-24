@@ -22,19 +22,46 @@ class ExamSessionController extends Controller
 
     public function submit(Request $request, $id)
     {
-        $exam = Exam::findOrFail($id);
+        $exam = Exam::with('questions.options')->findOrFail($id);
+        $answers = $request->input('answers', []);
 
-        $request->validate([
-            'score' => 'required|numeric|min:0|max:100',
-        ]);
+        $correct = 0;
+        $total   = $exam->questions->count();
+
+        foreach ($exam->questions as $question) {
+            $answer = collect($answers)->firstWhere('question_id', $question->id);
+
+            if ($question->question_type === 'multiple_choice' && $answer) {
+                $selectedOption = $question->options->firstWhere('id', $answer['option_id']);
+                if ($selectedOption && $selectedOption->is_correct) {
+                    $correct++;
+                }
+            }
+
+            if ($question->question_type === 'essay' && $answer) {
+                // TODO: manual check essay
+            }
+        }
+
+        // hitung score, misalnya pakai persentase
+        $score = $total > 0 ? round(($correct / $total) * 100) : 0;
 
         $result = ExamResult::create([
-            'exam_id'     => $exam->id,
-            'user_id'     => $request->user()->id,
-            'score'       => $request->score,
-            'submitted_at'=> now(),
+            'exam_id'      => $exam->id,
+            'user_id'      => $request->user()->id,
+            'score'        => $score,
+            'submitted_at' => now(),
         ]);
 
-        return new ExamResultResource($result->load('user'));
+        return (new ExamResultResource($result->load('user')))->additional([
+            'meta' => [
+                'correct' => $correct,
+                'wrong'   => $total - $correct,
+                'total'   => $total,
+            ],
+        ]);
     }
+
+
+
 }

@@ -6,6 +6,7 @@ use App\Http\Resources\AssignmentResource;
 use App\Models\Assignment;
 use App\Models\Module;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AssignmentController extends Controller
 {
@@ -16,19 +17,21 @@ class AssignmentController extends Controller
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'due_date'    => 'nullable|date',
+            'due_date'    => 'nullable|date_format:Y-m-d H:i',
+            'document'    => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,txt|max:2048',
         ]);
 
         $module = Module::findOrFail($moduleId);
 
-        $assignment = $module->assignments()->create([
-            'title'       => $request->title,
-            'description' => $request->description,
-            'due_date'    => $request->due_date,
-        ]);
+        // Upload dokumen jika ada
+        if ($request->hasFile('document')) {
+            $validated['document_path'] = $request->file('document')->store('assignments', 'public');
+        }
+
+        $assignment = $module->assignments()->create($validated);
 
         return new AssignmentResource($assignment);
     }
@@ -56,13 +59,26 @@ class AssignmentController extends Controller
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'title'       => 'sometimes|string|max:255',
             'description' => 'nullable|string',
-            'due_date'    => 'nullable|date',
+            'due_date'    => 'nullable|date_format:Y-m-d H:i',
+            'document'    => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,txt|max:2048',
         ]);
 
-        $assignment->update($request->only(['title', 'description', 'due_date']));
+        // Jika ada file baru, hapus file lama lalu simpan yang baru
+        if ($request->hasFile('document')) {
+            if ($assignment->document_path) {
+                try {
+                    Storage::disk('public')->delete($assignment->document_path);
+                } catch (\Throwable $e) {
+                    // biarkan lewat jika file memang sudah tidak ada
+                }
+            }
+            $validated['document_path'] = $request->file('document')->store('assignments', 'public');
+        }
+
+        $assignment->update($validated);
 
         return new AssignmentResource($assignment);
     }
@@ -76,8 +92,20 @@ class AssignmentController extends Controller
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
+        // Hapus file jika ada
+        if ($assignment->document_path) {
+            try {
+                Storage::disk('public')->delete($assignment->document_path);
+            } catch (\Throwable $e) {
+                // biarkan lewat kalau file memang sudah tidak ada
+            }
+        }
+
         $assignment->delete();
 
-        return response()->json(['message' => 'Assignment deleted successfully']);
+        return response()->json([
+            'message' => 'Assignment deleted successfully',
+            'id'      => $id,
+        ]);
     }
 }

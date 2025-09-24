@@ -47,38 +47,40 @@ const Testimonials = () => {
   }, [])
 
   return (
-    <section className="relative isolate overflow-hidden bg-gray-900 px-6 py-24 sm:py-32 lg:px-8" id="testimonials">
-      {/* background gradient */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(45rem_50rem_at_top,var(--color-indigo-100),white)] opacity-20" />
-      <div className="absolute inset-y-0 right-1/2 -z-10 mr-16 w-[200%] origin-bottom-left skew-x-[-30deg] bg-gray-500 shadow-xl ring-1 shadow-indigo-600/10 ring-indigo-50 sm:mr-28 lg:mr-0 xl:mr-16 xl:origin-center" />
+    <section
+      id="testimonials"
+      className="relative isolate overflow-hidden px-6 py-24 sm:py-32 lg:px-8"
+    >
+      {/* background pakai palet */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#E4004B] via-[#ED775A] to-[#FAD691] opacity-90" />
 
       <div className="mx-auto max-w-2xl lg:max-w-4xl">
-        <h3 className="text-center text-2xl font-bold text-white">
+        <h3 className="text-center text-3xl font-bold text-white drop-shadow-lg">
           Apa Kata Mereka?
         </h3>
 
-        <div className="relative mt-10">
+        <div className="relative mt-12">
           <AnimatePresence mode="wait">
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
               transition={{ duration: 0.5 }}
             >
-              <Card className="shadow-lg border-0">
-                <CardContent className="p-8">
-                  <blockquote className="text-center text-xl font-semibold text-gray-900 sm:text-2xl">
+              <Card className="backdrop-blur-lg bg-white/20 border border-white/30 shadow-2xl rounded-2xl">
+                <CardContent className="p-10">
+                  <blockquote className="text-center text-xl font-medium text-white sm:text-2xl">
                     <p>“{testimonials[index].message}”</p>
                   </blockquote>
-                  <figcaption className="mt-10">
+                  <figcaption className="mt-8">
                     <img
                       alt={testimonials[index].name}
                       src={testimonials[index].avatar}
-                      className="mx-auto size-12 rounded-full"
+                      className="mx-auto size-14 rounded-full ring-4 ring-[#FAD691]"
                     />
                     <div className="mt-4 flex items-center justify-center space-x-3 text-base">
-                      <div className="font-semibold text-gray-900">
+                      <div className="font-semibold text-white">
                         {testimonials[index].name}
                       </div>
                       <svg
@@ -86,11 +88,11 @@ const Testimonials = () => {
                         height={3}
                         viewBox="0 0 2 2"
                         aria-hidden="true"
-                        className="fill-gray-900"
+                        className="fill-[#C9CDCF]"
                       >
                         <circle r={1} cx={1} cy={1} />
                       </svg>
-                      <div className="text-gray-600">
+                      <div className="text-[#C9CDCF]">
                         {testimonials[index].role}
                       </div>
                     </div>
@@ -101,23 +103,34 @@ const Testimonials = () => {
           </AnimatePresence>
 
           {/* tombol prev & next */}
-        </div>
           <Button
-            variant="outline"
-            size="sm"
             onClick={handlePrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 mx-6"
+            className="absolute left-0 top-1/2 -translate-y-1/2 mx-6 rounded-full bg-[#E4004B] hover:bg-[#ED775A] text-white shadow-lg"
           >
             ◀
           </Button>
           <Button
-            variant="outline"
-            size="sm"
             onClick={handleNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 mx-6"
+            className="absolute right-0 top-1/2 -translate-y-1/2 mx-6 rounded-full bg-[#E4004B] hover:bg-[#ED775A] text-white shadow-lg"
           >
             ▶
           </Button>
+        </div>
+
+        {/* indicator dots */}
+        <div className="mt-8 flex justify-center space-x-3">
+          {testimonials.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIndex(i)}
+              className={`h-3 w-3 rounded-full transition-all ${
+                index === i
+                  ? "bg-[#E4004B] scale-110"
+                  : "bg-[#C9CDCF] hover:bg-[#ED775A]"
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </section>
   )

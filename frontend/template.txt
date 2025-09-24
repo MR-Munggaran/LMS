@@ -1,0 +1,32 @@
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+const CreateCourse = () => {
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+      <Card className="w-full max-w-[150vh] shadow-lg mb-[50vh]">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">Create Course</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid w-full gap-2">
+            <Label htmlFor="title">Title</Label>
+            <Input type="text" id="title" placeholder="Enter course title" className="w-full" />
+          </div>
+          <div className="grid w-full gap-2">
+            <Label htmlFor="desc">Description</Label>
+            <Textarea id="desc" placeholder="Type your description here..." className="w-full h-32" />
+          </div>
+          <div className="grid w-full gap-2">
+            <Label htmlFor="creator">Created By</Label>
+            <Input disabled type="text" id="creator" placeholder="Name" className="w-full" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+export default CreateCourse

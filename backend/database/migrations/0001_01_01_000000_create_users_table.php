@@ -25,8 +25,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('face_data_path')->nullable(); // tambahan
-            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade'); // tambahan
+            // $table->string('face_data_path')->nullable(); // masih ada tapi tidak dipakai
+            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade'); 
+            
+            // Kolom tambahan
+            $table->string('jenjang_sekolah')->nullable(); 
+            $table->string('asal_sekolah')->nullable();    
+            $table->string('avatar')->nullable();          
+            
             $table->rememberToken();
             $table->timestamps();
         });

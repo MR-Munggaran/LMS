@@ -1,77 +1,122 @@
-import { Facebook, Github, Instagram, Twitter, Youtube } from 'lucide-react';
-
+import { Facebook, Github, Instagram, Twitter, Youtube } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-12 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-8">
-          {/* Logo & Deskripsi */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-indigo-400 text-2xl font-bold">LMS</span>
-            </div>
-            <p className="text-sm leading-relaxed mb-4">
-              Making the world a better place through constructing elegant hierarchies.
-            </p>
-            <div className="flex space-x-4 text-xl">
-              <a href="#" aria-label="Facebook"><Facebook /></a>
-              <a href="#" aria-label="Instagram"><Instagram /></a>
-              <a href="#" aria-label="X / Twitter"><Twitter /></a>
-              <a href="#" aria-label="Github"><Github /></a>
-              <a href="#" aria-label="YouTube"><Youtube /></a>
-            </div>
-          </div>
+    <footer className="relative text-gray-200">
+      {/* background gradient */}
+      <div className="absolute inset-0 -z-20 bg-gradient-to-br from-[#E4004B] via-[#ED775A] to-[#FAD691]" />
+      {/* overlay gelap tipis */}
+      <div className="absolute inset-0 -z-10 bg-black/50" />
 
-          {/* Solutions */}
-          <div>
-            <h3 className="font-semibold mb-4">Solutions</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#">Marketing</a></li>
-              <li><a href="#">Analytics</a></li>
-              <li><a href="#">Automation</a></li>
-              <li><a href="#">Commerce</a></li>
-              <li><a href="#">Insights</a></li>
-            </ul>
+      <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-5 gap-12">
+        {/* Logo & Deskripsi */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-3xl font-extrabold text-[#E4004B] tracking-wide">
+              LMS
+            </span>
           </div>
-
-          {/* Support */}
-          <div>
-            <h3 className="font-semibold mb-4">Support</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#">Submit ticket</a></li>
-              <li><a href="#">Documentation</a></li>
-              <li><a href="#">Guides</a></li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3 className="font-semibold mb-4">Company</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#">About</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">Jobs</a></li>
-              <li><a href="#">Press</a></li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#">Terms of service</a></li>
-              <li><a href="#">Privacy policy</a></li>
-              <li><a href="#">License</a></li>
-            </ul>
+          <p className="text-sm leading-relaxed mb-6 text-[#C9CDCF]">
+            Making the world a better place through constructing elegant
+            hierarchies.
+          </p>
+          <div className="flex space-x-3">
+            {[
+              { Icon: Facebook, label: "Facebook" },
+              { Icon: Instagram, label: "Instagram" },
+              { Icon: Twitter, label: "Twitter" },
+              { Icon: Github, label: "Github" },
+              { Icon: Youtube, label: "YouTube" },
+            ].map(({ Icon, label }) => (
+              <a
+                key={label}
+                href="#"
+                aria-label={label}
+                className="p-2 rounded-full bg-black/20 hover:bg-[#FAD691]/40 transition text-black shadow-md"
+              >
+                <Icon className="w-5 h-5" />
+              </a>
+            ))}
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-gray-700 mt-12 pt-6 text-center text-sm text-gray-400">
-          © 2024 Your Company, Inc. All rights reserved.
+        {/* Solutions */}
+        <div>
+          <h3 className="font-semibold mb-4 text-black">Solutions</h3>
+          <ul className="space-y-2 text-sm">
+            {["Marketing", "Analytics", "Automation", "Commerce", "Insights"].map(
+              (item) => (
+                <li key={item}>
+                  <a
+                    href="#"
+                    className="hover:text-[#FAD691] transition-colors text-[#ED775A]"
+                  >
+                    {item}
+                  </a>
+                </li>
+              )
+            )}
+          </ul>
         </div>
-      </footer>
-  )
-}
 
-export default Footer
+        {/* Support */}
+        <div>
+          <h3 className="font-semibold mb-4 text-black">Support</h3>
+          <ul className="space-y-2 text-sm">
+            {["Submit ticket", "Documentation", "Guides"].map((item) => (
+              <li key={item}>
+                <a
+                  href="#"
+                  className="hover:text-[#FAD691] transition-colors text-[#ED775A]"
+                >
+                  {item}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Company */}
+        <div>
+          <h3 className="font-semibold mb-4 text-black">Company</h3>
+          <ul className="space-y-2 text-sm">
+            {["About", "Blog", "Jobs", "Press"].map((item) => (
+              <li key={item}>
+                <a
+                  href="#"
+                  className="hover:text-[#FAD691] transition-colors text-[#ED775A]"
+                >
+                  {item}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Legal */}
+        <div>
+          <h3 className="font-semibold mb-4 text-black">Legal</h3>
+          <ul className="space-y-2 text-sm">
+            {["Terms of service", "Privacy policy", "License"].map((item) => (
+              <li key={item}>
+                <a
+                  href="#"
+                  className="hover:text-[#FAD691] transition-colors text-[#ED775A]"
+                >
+                  {item}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Copyright */}
+      <div className="border-t border-black/30 my-10 pt-6 text-center text-sm text-[#ED775A]">
+        © 2024 Your Company, Inc. All rights reserved.
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
