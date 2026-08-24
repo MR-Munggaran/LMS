@@ -20,8 +20,10 @@ if ($resolved === $host) {
 }
 
 try {
+    // dbname=postgres = maintenance database bawaan PostgreSQL.
+    // Tanpa dbname, libpq memakai nama user sebagai nama database -> FATAL "database X does not exist".
     new PDO(
-        sprintf('pgsql:host=%s;port=%s', $host, $port),
+        sprintf('pgsql:host=%s;port=%s;dbname=postgres', $host, $port),
         $user,
         $pass,
         [PDO::ATTR_TIMEOUT => 5]
