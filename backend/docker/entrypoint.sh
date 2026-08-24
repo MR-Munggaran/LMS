@@ -12,22 +12,18 @@ cd /var/www/html
 
 echo "[entrypoint] Menunggu database ${DB_HOST:-postgres}:${DB_PORT:-5432}..."
 i=0
-until php -r '
-try {
-    new PDO(
-        sprintf("pgsql:host=%s;port=%s", getenv("DB_HOST") ?: "postgres", getenv("DB_PORT") ?: "5432"),
-        getenv("DB_USERNAME") ?: "admin",
-        getenv("DB_PASSWORD")
-    );
-    exit(0);
-} catch (Throwable $e) {
-    exit(1);
-}' >/dev/null 2>&1; do
+while true; do
+    if php docker/waitdb.php > /tmp/waitdb.out 2>&1; then
+        break
+    fi
+    REASON="$(cat /tmp/waitdb.out)"
     i=$((i + 1))
     if [ "$i" -ge 60 ]; then
         echo "[entrypoint] ERROR: database tidak kunjung siap." >&2
+        echo "[entrypoint] Penyebab terakhir: $REASON" >&2
         exit 1
     fi
+    echo "[entrypoint] Menunggu database ($i/60): $REASON"
     sleep 2
 done
 echo "[entrypoint] Database siap."
