@@ -1,0 +1,110 @@
+name: lms
+
+services:
+  # ------------------------------------------------------------------
+  # One-shot: buat database "lms" di PostgreSQL homelab jika belum ada
+  # ------------------------------------------------------------------
+  db-init:
+    image: postgres:17-alpine
+    container_name: lms-db-init
+    restart: "no"
+    networks:
+      - homelab
+    environment:
+      PGHOST: ${DB_HOST}
+      PGPORT: ${DB_PORT}
+      PGUSER: ${DB_USERNAME}
+      PGPASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_DATABASE}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        until pg_isready -h $$PGHOST -p $$PGPORT; do echo "Menunggu PostgreSQL..."; sleep 2; done;
+        psql -tAc "SELECT 1 FROM pg_database WHERE datname='$${DB_NAME}'" | grep -q 1 \
+          && echo "Database $${DB_NAME} sudah ada, skip." \
+          || (echo "Membuat database $${DB_NAME}..." && createdb "$${DB_NAME}" && echo "Database dibuat.")
+
+  # ------------------------------------------------------------------
+  # Backend API (Laravel 12) — PHP-FPM + Nginx dalam satu container
+  # Otomatis: tunggu DB -> migrate -> seed jika kosong -> cache -> storage:link
+  # ------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: lms-backend
+    container_name: lms-backend
+    restart: unless-stopped
+    networks:
+      - homelab
+    ports:
+      - "${BACKEND_PORT:-4001}:80"
+    env_file:
+      - .env
+    environment:
+      APP_ENV: production
+      APP_DEBUG: ${APP_DEBUG:-false}
+    volumes:
+      - lms_backend_storage:/var/www/html/storage/app/public
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ------------------------------------------------------------------
+  # Frontend SPA (React + Vite) — build statis + Nginx
+  # Nginx juga jadi reverse proxy /api -> backend
+  # ------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: lms-frontend
+    container_name: lms-frontend
+    restart: unless-stopped
+    networks:
+      - homelab
+    ports:
+      - "${FRONTEND_PORT:-3006}:80"
+    depends_on:
+      backend:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  lms_backend_storage:
+
+networks:
+  homelab:
+    external: true

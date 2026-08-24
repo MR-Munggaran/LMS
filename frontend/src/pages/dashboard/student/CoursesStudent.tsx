@@ -19,7 +19,7 @@ function CoursesStudent() {
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null)
 
   const [enrollPage, setEnrollPage] = useState(1)
-  const [coursePage, setCoursePage] = useState(1)
+  const [coursePage] = useState(1)
 
   const fetchData = async (ep = enrollPage, cp = coursePage) => {
     if (!user) return

@@ -1,0 +1,6 @@
+# Pastikan script shell selalu LF (wajib agar bisa dieksekusi di container Linux)
+*.sh text eol=lf
+
+# File konfigurasi docker
+Dockerfile text
+*.conf text eol=lf

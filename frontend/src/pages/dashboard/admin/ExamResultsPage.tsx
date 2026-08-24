@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { useExamSession, type ExamResult } from "@/hooks/useExamSession"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import toast from "react-hot-toast"
 
 export default function ExamResultsPage() {
   const { examId } = useParams<{ examId: string }>()
-  const navigate = useNavigate()
   const { getExamResults } = useExamSession()
 
   const [results, setResults] = useState<ExamResult[]>([])

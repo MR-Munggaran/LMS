@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Assignment;
 use App\Models\Module;
-use Faker\Factory as Faker;
+use Carbon\Carbon;
 
 class AssignmentSeeder extends Seeder
 {
@@ -14,25 +14,27 @@ class AssignmentSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create();
-
         $modules = Module::all();
 
         if ($modules->isEmpty()) {
-            $this->command->warn("⚠️ Tidak ada module, seeder Assignment dilewati.");
+            $this->command->warn("Tidak ada module, seeder Assignment dilewati.");
             return;
         }
 
-        // buat 10 assignment acak
-        for ($i = 0; $i < 10; $i++) {
-            $module = $modules->random();
-
-            Assignment::create([
-                'module_id'   => $module->id,
-                'title'       => 'Tugas ' . ($i + 1) . ' - ' . $faker->sentence(3),
-                'description' => $faker->paragraph(),
-                'due_date'    => $faker->dateTimeBetween('now', '+1 month'),
-            ]);
+        // 2 tugas deterministik per module (idempotent via firstOrCreate)
+        foreach ($modules as $module) {
+            for ($i = 1; $i <= 2; $i++) {
+                Assignment::firstOrCreate(
+                    [
+                        'module_id' => $module->id,
+                        'title' => "Tugas $i - {$module->title}",
+                    ],
+                    [
+                        'description' => "Kerjakan tugas $i untuk module '{$module->title}'. Kumpulkan sebelum tenggat waktu yang ditentukan.",
+                        'due_date' => Carbon::now()->addDays($i * 7),
+                    ]
+                );
+            }
         }
     }
 }

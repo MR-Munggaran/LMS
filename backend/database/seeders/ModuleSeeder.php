@@ -21,15 +21,19 @@ class ModuleSeeder extends Seeder
         }
 
         foreach ($courses as $course) {
-            // Contoh 3 module per course
+            // 3 module per course (idempotent via firstOrCreate)
             for ($i = 1; $i <= 3; $i++) {
-                Module::create([
-                    'course_id' => $course->id,
-                    'title' => "Module $i: Materi {$i} dari {$course->title}",
-                    'content' => "Ini adalah konten pembelajaran untuk module $i dari course '{$course->title}'. Disini peserta akan mempelajari topik-topik penting terkait {$course->title}.",
-                    'document_path' => null, // bisa diisi path dokumen jika ada
-                    'video_url' => null,     // bisa diisi link video jika ada
-                ]);
+                Module::firstOrCreate(
+                    [
+                        'course_id' => $course->id,
+                        'title' => "Module $i: Materi {$i} dari {$course->title}",
+                    ],
+                    [
+                        'content' => "Ini adalah konten pembelajaran untuk module $i dari course '{$course->title}'. Disini peserta akan mempelajari topik-topik penting terkait {$course->title}.",
+                        'document_path' => null,
+                        'video_url' => null,
+                    ]
+                );
             }
         }
 
