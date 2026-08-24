@@ -3,7 +3,15 @@
 # ============================================================
 # Stage 1: install dependency composer (tanpa dev)
 # ============================================================
-FROM composer:2 AS vendor
+FROM php:8.3-cli-alpine AS vendor
+
+# Git & unzip untuk kebutuhan composer install
+RUN apk add --no-cache git unzip
+
+# Composer binary dari image resmi,
+# tapi dijalankan di atas PHP 8.3 yang sama dengan runtime
+# (image composer:2 bundling PHP terbaru yang bisa menolak paket lama)
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
